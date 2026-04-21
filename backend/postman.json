@@ -1,0 +1,1323 @@
+{
+  "info": {
+    "name": "School Management System — Full API",
+    "description": "Complete Postman collection for School Management System backend.\n\n**Setup:**\n1. Run seed.js to populate the DB.\n2. Call POST /api/auth/login → copy the token.\n3. In this collection's Variables tab set `baseUrl` and `token`.\n4. All protected requests use Bearer {{token}} automatically.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5000", "type": "string" },
+    { "key": "token",   "value": "PASTE_JWT_HERE",        "type": "string" },
+    { "key": "academicYearId",  "value": "", "type": "string" },
+    { "key": "classroomId",     "value": "", "type": "string" },
+    { "key": "studentId",       "value": "", "type": "string" },
+    { "key": "employeeId",      "value": "", "type": "string" },
+    { "key": "subjectId",       "value": "", "type": "string" },
+    { "key": "examId",          "value": "", "type": "string" },
+    { "key": "feeId",           "value": "", "type": "string" },
+    { "key": "payrollId",       "value": "", "type": "string" },
+    { "key": "leaveId",         "value": "", "type": "string" },
+    { "key": "homeworkId",      "value": "", "type": "string" },
+    { "key": "noticeId",        "value": "", "type": "string" },
+    { "key": "enquiryId",       "value": "", "type": "string" }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+  },
+  "item": [
+
+    {
+      "name": "🔐 Auth",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/auth/register",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"New Admin\",\n  \"email\": \"newadmin@school.com\",\n  \"password\": \"Admin@123\",\n  \"role\": \"admin\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login — Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.data && json.data.token) {",
+                  "  pm.collectionVariables.set('token', json.data.token);",
+                  "  console.log('Token saved:', json.data.token.substring(0,30)+'...');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@school.com\",\n  \"password\": \"Admin@123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login — Principal",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"principal@school.com\",\n  \"password\": \"Principal@123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login — Teacher",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"priya.patel@school.com\",\n  \"password\": \"Teacher@123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login — Parent",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"anil.gupta@gmail.com\",\n  \"password\": \"Parent@123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Me",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/auth/me"
+          }
+        },
+        {
+          "name": "Change Password",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/auth/change-password",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currentPassword\": \"Admin@123\",\n  \"newPassword\": \"Admin@456\"\n}"
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "📅 Academic Years",
+      "item": [
+        {
+          "name": "Get All Academic Years",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/academic-years" }
+        },
+        {
+          "name": "Get Current Academic Year",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/academic-years/current" }
+        },
+        {
+          "name": "Get Academic Year by ID",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/academic-years/{{academicYearId}}" }
+        },
+        {
+          "name": "Create Academic Year",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/academic-years",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"2025-2026\",\n  \"startDate\": \"2025-04-01\",\n  \"endDate\": \"2026-03-31\",\n  \"isCurrent\": false\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Academic Year",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/academic-years/{{academicYearId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"2025-2026\",\n  \"startDate\": \"2025-04-01\",\n  \"endDate\": \"2026-03-31\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Set Current Academic Year",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/api/academic-years/{{academicYearId}}/set-current"
+          }
+        },
+        {
+          "name": "Delete Academic Year",
+          "request": { "method": "DELETE", "url": "{{baseUrl}}/api/academic-years/{{academicYearId}}" }
+        }
+      ]
+    },
+
+    {
+      "name": "🏫 Classrooms",
+      "item": [
+        {
+          "name": "Get All Classrooms",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/classrooms?academicYear={{academicYearId}}&isActive=true",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "classrooms"],
+              "query": [
+                { "key": "academicYear", "value": "{{academicYearId}}" },
+                { "key": "isActive", "value": "true" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Classroom by ID",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/classrooms/{{classroomId}}" }
+        },
+        {
+          "name": "Create Classroom",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/classrooms",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"className\": \"4\",\n  \"section\": \"A\",\n  \"displayName\": \"Class 4-A\",\n  \"monthlyFees\": 4500,\n  \"order\": 5,\n  \"capacity\": 40,\n  \"isActive\": true,\n  \"academicYear\": \"{{academicYearId}}\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Classroom",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/classrooms/{{classroomId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"monthlyFees\": 3200,\n  \"capacity\": 45\n}"
+            }
+          }
+        },
+        {
+          "name": "Toggle Classroom Active",
+          "request": { "method": "PATCH", "url": "{{baseUrl}}/api/classrooms/{{classroomId}}/toggle" }
+        },
+        {
+          "name": "Delete Classroom",
+          "request": { "method": "DELETE", "url": "{{baseUrl}}/api/classrooms/{{classroomId}}" }
+        }
+      ]
+    },
+
+    {
+      "name": "👨‍🏫 Employees",
+      "item": [
+        {
+          "name": "Get All Employees",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/employees?status=active&role=teacher",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "employees"],
+              "query": [
+                { "key": "status", "value": "active" },
+                { "key": "role",   "value": "teacher" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Search Employees",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/employees?search=Priya",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "employees"],
+              "query": [{ "key": "search", "value": "Priya" }]
+            }
+          }
+        },
+        {
+          "name": "Get Employee by ID",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/employees/{{employeeId}}" }
+        },
+        {
+          "name": "Create Employee",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/employees",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Neha Kulkarni\",\n  \"email\": \"neha.kulkarni@school.com\",\n  \"mobileNo\": \"9000000099\",\n  \"gender\": \"Female\",\n  \"dateOfBirth\": \"1992-06-15\",\n  \"dateOfJoining\": \"2024-06-01\",\n  \"monthlySalary\": 38000,\n  \"role\": \"teacher\",\n  \"status\": \"active\",\n  \"bloodGroup\": \"A+\",\n  \"homeAddress\": \"Pune\",\n  \"education\": \"B.Ed\",\n  \"experience\": \"2 years\",\n  \"academicYear\": \"{{academicYearId}}\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Employee",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/employees/{{employeeId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"monthlySalary\": 46000,\n  \"homeAddress\": \"Kothrud, Pune\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Employee Status",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/employees/{{employeeId}}/status",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"inactive\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Employee",
+          "request": { "method": "DELETE", "url": "{{baseUrl}}/api/employees/{{employeeId}}" }
+        }
+      ]
+    },
+
+    {
+      "name": "🎓 Students",
+      "item": [
+        {
+          "name": "Get All Students",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/students?academicYear={{academicYearId}}&status=Approved&page=1&limit=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "students"],
+              "query": [
+                { "key": "academicYear", "value": "{{academicYearId}}" },
+                { "key": "status", "value": "Approved" },
+                { "key": "page",   "value": "1" },
+                { "key": "limit",  "value": "20" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Students by Class",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/students?classId={{classroomId}}&status=Approved",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "students"],
+              "query": [
+                { "key": "classId", "value": "{{classroomId}}" },
+                { "key": "status",  "value": "Approved" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Search Students",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/students?search=Arjun",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "students"],
+              "query": [{ "key": "search", "value": "Arjun" }]
+            }
+          }
+        },
+        {
+          "name": "Get Student by ID",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/students/{{studentId}}" }
+        },
+        {
+          "name": "Create Student (Admission)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/students",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"Tanvi\",\n  \"middleName\": \"\",\n  \"lastName\": \"Bhosale\",\n  \"gender\": \"Female\",\n  \"dateOfBirth\": \"2016-09-25\",\n  \"classroom\": \"{{classroomId}}\",\n  \"fatherName\": \"Prashant Bhosale\",\n  \"fatherPhone\": \"9700000001\",\n  \"fatherEmail\": \"prashant.bhosale@gmail.com\",\n  \"motherName\": \"Smita Bhosale\",\n  \"motherPhone\": \"9700000002\",\n  \"bloodGroup\": \"O+\",\n  \"religion\": \"Hindu\",\n  \"academicYear\": \"{{academicYearId}}\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Student",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/students/{{studentId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bloodGroup\": \"A+\",\n  \"motherOccupation\": \"Teacher\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Approve Student",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/students/{{studentId}}/status",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"Approved\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Reject Student",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/students/{{studentId}}/status",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"Rejected\",\n  \"rejectionRemark\": \"Seat not available in requested class\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Hold Student",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/students/{{studentId}}/status",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"OnHold\",\n  \"holdRemark\": \"Pending document submission\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Student",
+          "request": { "method": "DELETE", "url": "{{baseUrl}}/api/students/{{studentId}}" }
+        }
+      ]
+    },
+
+    {
+      "name": "📚 Subjects",
+      "item": [
+        {
+          "name": "Get All Subjects",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/subjects?classId={{classroomId}}&academicYear={{academicYearId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "subjects"],
+              "query": [
+                { "key": "classId",      "value": "{{classroomId}}" },
+                { "key": "academicYear", "value": "{{academicYearId}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Subject by ID",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/subjects/{{subjectId}}" }
+        },
+        {
+          "name": "Create Single Subject",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/subjects",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Hindi\",\n  \"classroom\": \"{{classroomId}}\",\n  \"teacher\": \"{{employeeId}}\",\n  \"totalMarks\": 100,\n  \"academicYear\": \"{{academicYearId}}\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Create Bulk Subjects",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/subjects",
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  { \"name\": \"Drawing\", \"classroom\": \"{{classroomId}}\", \"totalMarks\": 50, \"academicYear\": \"{{academicYearId}}\" },\n  { \"name\": \"Music\",   \"classroom\": \"{{classroomId}}\", \"totalMarks\": 50, \"academicYear\": \"{{academicYearId}}\" }\n]"
+            }
+          }
+        },
+        {
+          "name": "Update Subject",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/subjects/{{subjectId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"totalMarks\": 150,\n  \"teacher\": \"{{employeeId}}\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Toggle Subject Active",
+          "request": { "method": "PATCH", "url": "{{baseUrl}}/api/subjects/{{subjectId}}/toggle" }
+        },
+        {
+          "name": "Delete Subject",
+          "request": { "method": "DELETE", "url": "{{baseUrl}}/api/subjects/{{subjectId}}" }
+        }
+      ]
+    },
+
+    {
+      "name": "📝 Enquiries",
+      "item": [
+        {
+          "name": "Submit Enquiry (Public)",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/enquiries",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"classApplying\": \"{{classroomId}}\",\n  \"childName\": \"Isha Kulkarni\",\n  \"fatherName\": \"Vijay Kulkarni\",\n  \"residentialAddress\": \"10, Shivaji Nagar, Pune\",\n  \"pinCode\": \"411005\",\n  \"phoneNo\": \"020-55667788\",\n  \"mobileNo\": \"9012345678\",\n  \"email\": \"vijay.kulkarni@gmail.com\",\n  \"gender\": \"Female\",\n  \"age\": 6,\n  \"dateOfBirth\": \"2018-03-15\",\n  \"preferredAdmissionDate\": \"2025-06-01\",\n  \"remark\": \"Interested in morning shift\",\n  \"academicYear\": \"{{academicYearId}}\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get All Enquiries",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/enquiries?page=1&limit=20&academicYear={{academicYearId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "enquiries"],
+              "query": [
+                { "key": "page",  "value": "1" },
+                { "key": "limit", "value": "20" },
+                { "key": "academicYear", "value": "{{academicYearId}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Filter Enquiries by Status",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/enquiries?status=New",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "enquiries"],
+              "query": [{ "key": "status", "value": "New" }]
+            }
+          }
+        },
+        {
+          "name": "Get Enquiry by ID",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/enquiries/{{enquiryId}}" }
+        },
+        {
+          "name": "Update Enquiry",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/enquiries/{{enquiryId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"Contacted\",\n  \"adminRemark\": \"Called parent on 14 Apr. Will visit school on 20 Apr.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Enquiry",
+          "request": { "method": "DELETE", "url": "{{baseUrl}}/api/enquiries/{{enquiryId}}" }
+        }
+      ]
+    },
+
+    {
+      "name": "✅ Attendance",
+      "item": [
+        {
+          "name": "Get Student Attendance",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/attendance/students?classId={{classroomId}}&academicYear={{academicYearId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "attendance", "students"],
+              "query": [
+                { "key": "classId",      "value": "{{classroomId}}" },
+                { "key": "academicYear", "value": "{{academicYearId}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Attendance by Date",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/attendance/students?classId={{classroomId}}&date=2024-08-01",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "attendance", "students"],
+              "query": [
+                { "key": "classId", "value": "{{classroomId}}" },
+                { "key": "date",    "value": "2024-08-01" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Mark Student Attendance (Bulk)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/attendance/students",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"records\": [\n    {\n      \"student\": \"{{studentId}}\",\n      \"classroom\": \"{{classroomId}}\",\n      \"date\": \"2024-09-02\",\n      \"status\": \"Present\",\n      \"remark\": \"\",\n      \"academicYear\": \"{{academicYearId}}\"\n    }\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Attendance Summary (Monthly)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/attendance/students/summary?classId={{classroomId}}&month=8&year=2024&academicYear={{academicYearId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "attendance", "students", "summary"],
+              "query": [
+                { "key": "classId",      "value": "{{classroomId}}" },
+                { "key": "month",        "value": "8" },
+                { "key": "year",         "value": "2024" },
+                { "key": "academicYear", "value": "{{academicYearId}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Employee Attendance",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/attendance/employees?academicYear={{academicYearId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "attendance", "employees"],
+              "query": [{ "key": "academicYear", "value": "{{academicYearId}}" }]
+            }
+          }
+        },
+        {
+          "name": "Mark Employee Attendance (Bulk)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/attendance/employees",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"records\": [\n    {\n      \"employee\": \"{{employeeId}}\",\n      \"date\": \"2024-09-02\",\n      \"status\": \"Present\",\n      \"academicYear\": \"{{academicYearId}}\"\n    }\n  ]\n}"
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "📊 Exams & Marks",
+      "item": [
+        {
+          "name": "Get All Exams",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/exams?classId={{classroomId}}&academicYear={{academicYearId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "exams"],
+              "query": [
+                { "key": "classId",      "value": "{{classroomId}}" },
+                { "key": "academicYear", "value": "{{academicYearId}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Exam by ID",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/exams/{{examId}}" }
+        },
+        {
+          "name": "Create Exam",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/exams",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Unit Test 2 - Mathematics\",\n  \"examType\": \"UnitTest2\",\n  \"subject\": \"{{subjectId}}\",\n  \"classroom\": \"{{classroomId}}\",\n  \"teacher\": \"{{employeeId}}\",\n  \"totalMarks\": 25,\n  \"examDate\": \"2024-11-10\",\n  \"description\": \"Chapters 4 to 6\",\n  \"academicYear\": \"{{academicYearId}}\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Exam",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/exams/{{examId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"examDate\": \"2024-11-12\",\n  \"description\": \"Updated: Chapters 4 to 7\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Exam (cascades marks)",
+          "request": { "method": "DELETE", "url": "{{baseUrl}}/api/exams/{{examId}}" }
+        },
+        {
+          "name": "Get Marks for Exam",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/exams/{{examId}}/marks" }
+        },
+        {
+          "name": "Save Marks (Bulk Upsert)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/exams/{{examId}}/marks",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"marks\": [\n    { \"student\": \"{{studentId}}\", \"marksObtained\": 21, \"isAbsent\": false, \"remarks\": \"Good work\" },\n    { \"student\": \"STUDENT_ID_2\", \"marksObtained\": 0, \"isAbsent\": true, \"remarks\": \"Absent\" }\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "Get All Marks (filtered)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/marks?studentId={{studentId}}&academicYear={{academicYearId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "marks"],
+              "query": [
+                { "key": "studentId",    "value": "{{studentId}}" },
+                { "key": "academicYear", "value": "{{academicYearId}}" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "💰 Fees",
+      "item": [
+        {
+          "name": "Get All Fees",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/fees?academicYear={{academicYearId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "fees"],
+              "query": [{ "key": "academicYear", "value": "{{academicYearId}}" }]
+            }
+          }
+        },
+        {
+          "name": "Get Fees by Student",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/fees?studentId={{studentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "fees"],
+              "query": [{ "key": "studentId", "value": "{{studentId}}" }]
+            }
+          }
+        },
+        {
+          "name": "Get Fee by ID",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/fees/{{feeId}}" }
+        },
+        {
+          "name": "Create Fee Record",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/fees",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"student\": \"{{studentId}}\",\n  \"classroom\": \"{{classroomId}}\",\n  \"month\": 6,\n  \"year\": 2024,\n  \"tuitionFee\": 3000,\n  \"transportFee\": 500,\n  \"activityFee\": 0,\n  \"otherFee\": 0,\n  \"discount\": 0,\n  \"dueDate\": \"2024-06-10\",\n  \"academicYear\": \"{{academicYearId}}\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Fee Record",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/fees/{{feeId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"lateFine\": 50,\n  \"notes\": \"Late payment fine added\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Collect Payment",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/fees/{{feeId}}/pay",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amountPaid\": 3500,\n  \"paymentMode\": \"UPI\",\n  \"transactionId\": \"UPI20240601XYZ\",\n  \"notes\": \"Paid via GPay\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Payments for Fee",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/fees/{{feeId}}/payments" }
+        },
+        {
+          "name": "Get All Receipts",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/fees/receipts/all?academicYear={{academicYearId}}&page=1&limit=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "fees", "receipts", "all"],
+              "query": [
+                { "key": "academicYear", "value": "{{academicYearId}}" },
+                { "key": "page",  "value": "1" },
+                { "key": "limit", "value": "20" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "💼 Payroll",
+      "item": [
+        {
+          "name": "Get All Payroll",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/payroll?month=4&year=2024&academicYear={{academicYearId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "payroll"],
+              "query": [
+                { "key": "month",        "value": "4" },
+                { "key": "year",         "value": "2024" },
+                { "key": "academicYear", "value": "{{academicYearId}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Payroll by ID",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/payroll/{{payrollId}}" }
+        },
+        {
+          "name": "Generate Payroll",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/payroll",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"employee\": \"{{employeeId}}\",\n  \"month\": 5,\n  \"year\": 2024,\n  \"daysPresent\": 25,\n  \"daysLeave\": 1,\n  \"bonus\": 1000,\n  \"paymentMode\": \"BankTransfer\",\n  \"academicYear\": \"{{academicYearId}}\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Mark Payroll as Paid",
+          "request": { "method": "PATCH", "url": "{{baseUrl}}/api/payroll/{{payrollId}}/pay" }
+        },
+        {
+          "name": "Update Payroll",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/payroll/{{payrollId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bonus\": 2000,\n  \"netSalary\": 47000\n}"
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "🏖 Leaves",
+      "item": [
+        {
+          "name": "Get All Leaves",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/leaves?status=Pending&academicYear={{academicYearId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "leaves"],
+              "query": [
+                { "key": "status",       "value": "Pending" },
+                { "key": "academicYear", "value": "{{academicYearId}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Apply for Leave",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/leaves",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"employee\": \"{{employeeId}}\",\n  \"leaveType\": \"Casual\",\n  \"fromDate\": \"2024-11-04\",\n  \"toDate\": \"2024-11-05\",\n  \"reason\": \"Family event\",\n  \"academicYear\": \"{{academicYearId}}\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Approve Leave",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/leaves/{{leaveId}}/action",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"Approved\",\n  \"approvalRemark\": \"Approved as requested.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Reject Leave",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/leaves/{{leaveId}}/action",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"Rejected\",\n  \"approvalRemark\": \"Insufficient staff during that period.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Leave (Pending only)",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/leaves/{{leaveId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Updated: Medical appointment\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Leave (Pending only)",
+          "request": { "method": "DELETE", "url": "{{baseUrl}}/api/leaves/{{leaveId}}" }
+        }
+      ]
+    },
+
+    {
+      "name": "📓 Homework",
+      "item": [
+        {
+          "name": "Get All Homework",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/homework?classId={{classroomId}}&academicYear={{academicYearId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "homework"],
+              "query": [
+                { "key": "classId",      "value": "{{classroomId}}" },
+                { "key": "academicYear", "value": "{{academicYearId}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Assign Homework",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/homework",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"classroom\": \"{{classroomId}}\",\n  \"subject\": \"{{subjectId}}\",\n  \"teacher\": \"{{employeeId}}\",\n  \"title\": \"Read Chapter 5\",\n  \"description\": \"Read pages 45-55 and answer Q1-Q5 at the end.\",\n  \"dueDate\": \"2024-09-10\",\n  \"academicYear\": \"{{academicYearId}}\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Homework",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/homework/{{homeworkId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"dueDate\": \"2024-09-12\",\n  \"description\": \"Extended deadline. Complete Q1-Q10.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Homework",
+          "request": { "method": "DELETE", "url": "{{baseUrl}}/api/homework/{{homeworkId}}" }
+        }
+      ]
+    },
+
+    {
+      "name": "📢 Notices",
+      "item": [
+        {
+          "name": "Get All Notices",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/notices?academicYear={{academicYearId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "notices"],
+              "query": [{ "key": "academicYear", "value": "{{academicYearId}}" }]
+            }
+          }
+        },
+        {
+          "name": "Get Notice by ID",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/notices/{{noticeId}}" }
+        },
+        {
+          "name": "Create Notice",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/notices",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"School Closed on 15th August\",\n  \"content\": \"School will remain closed on 15th August on account of Independence Day. Classes will resume on 16th August.\",\n  \"targetRoles\": [\"parent\", \"teacher\"],\n  \"priority\": \"Important\",\n  \"publishDate\": \"2024-08-10\",\n  \"expiryDate\": \"2024-08-16\",\n  \"academicYear\": \"{{academicYearId}}\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Notice",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/notices/{{noticeId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"priority\": \"Urgent\",\n  \"content\": \"UPDATED: School will remain closed on 15th & 16th August.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Notice",
+          "request": { "method": "DELETE", "url": "{{baseUrl}}/api/notices/{{noticeId}}" }
+        }
+      ]
+    },
+
+    {
+      "name": "🗓 Timetable",
+      "item": [
+        {
+          "name": "Get All Timetables",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/timetable?academicYear={{academicYearId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "timetable"],
+              "query": [{ "key": "academicYear", "value": "{{academicYearId}}" }]
+            }
+          }
+        },
+        {
+          "name": "Get Timetable for Class",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/timetable/{{classroomId}}?academicYear={{academicYearId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "timetable", "{{classroomId}}"],
+              "query": [{ "key": "academicYear", "value": "{{academicYearId}}" }]
+            }
+          }
+        },
+        {
+          "name": "Create / Replace Timetable",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/timetable",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"classroom\": \"{{classroomId}}\",\n  \"academicYear\": \"{{academicYearId}}\",\n  \"schedule\": [\n    {\n      \"day\": \"Monday\",\n      \"periods\": [\n        { \"periodNo\": 1, \"startTime\": \"08:00\", \"endTime\": \"08:45\", \"subject\": \"{{subjectId}}\", \"teacher\": \"{{employeeId}}\" },\n        { \"periodNo\": 2, \"startTime\": \"08:45\", \"endTime\": \"09:30\", \"subject\": \"{{subjectId}}\", \"teacher\": \"{{employeeId}}\" }\n      ]\n    }\n  ]\n}"
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "📈 Promote",
+      "item": [
+        {
+          "name": "Preview Promotions",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/promote/preview?classId={{classroomId}}&academicYear={{academicYearId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "promote", "preview"],
+              "query": [
+                { "key": "classId",      "value": "{{classroomId}}" },
+                { "key": "academicYear", "value": "{{academicYearId}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Execute Promotions",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/promote",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"promotions\": [\n    { \"studentId\": \"{{studentId}}\", \"action\": \"Promoted\", \"nextClassId\": \"NEXT_CLASS_ID\" },\n    { \"studentId\": \"STUDENT_ID_2\",  \"action\": \"Detained\" },\n    { \"studentId\": \"STUDENT_ID_3\",  \"action\": \"Left\", \"leavingReason\": \"Relocated to another city\" }\n  ]\n}"
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "⚙️ Settings",
+      "item": [
+        {
+          "name": "Get School Settings",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/settings" }
+        },
+        {
+          "name": "Update School Settings",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/settings",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sunrise Public School\",\n  \"address\": \"42, Knowledge Park, Pune - 411001\",\n  \"phone\": \"020-12345678\",\n  \"email\": \"info@sunriseschool.edu.in\",\n  \"website\": \"https://sunriseschool.edu.in\",\n  \"lateFinePer\": 15,\n  \"feeDueDay\": 10,\n  \"minAttendance\": 75\n}"
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "📊 Reports",
+      "item": [
+        {
+          "name": "Dashboard Overview",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/reports/overview?academicYear={{academicYearId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "reports", "overview"],
+              "query": [{ "key": "academicYear", "value": "{{academicYearId}}" }]
+            }
+          }
+        },
+        {
+          "name": "Fee Collection (Monthly)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/reports/fee-collection?year=2024&academicYear={{academicYearId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "reports", "fee-collection"],
+              "query": [
+                { "key": "year",         "value": "2024" },
+                { "key": "academicYear", "value": "{{academicYearId}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Fee Defaulters",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/reports/fee-defaulters?academicYear={{academicYearId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "reports", "fee-defaulters"],
+              "query": [{ "key": "academicYear", "value": "{{academicYearId}}" }]
+            }
+          }
+        },
+        {
+          "name": "Attendance Summary (Classwise)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/reports/attendance-summary?classId={{classroomId}}&month=8&year=2024",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "reports", "attendance-summary"],
+              "query": [
+                { "key": "classId", "value": "{{classroomId}}" },
+                { "key": "month",   "value": "8" },
+                { "key": "year",    "value": "2024" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Low Attendance Students",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/reports/low-attendance?threshold=75&academicYear={{academicYearId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "reports", "low-attendance"],
+              "query": [
+                { "key": "threshold",    "value": "75" },
+                { "key": "academicYear", "value": "{{academicYearId}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Exam Results Analysis",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/reports/exam-results?classId={{classroomId}}&academicYear={{academicYearId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "reports", "exam-results"],
+              "query": [
+                { "key": "classId",      "value": "{{classroomId}}" },
+                { "key": "academicYear", "value": "{{academicYearId}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Student Result Card",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/reports/student-result-card?studentId={{studentId}}&academicYear={{academicYearId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "reports", "student-result-card"],
+              "query": [
+                { "key": "studentId",    "value": "{{studentId}}" },
+                { "key": "academicYear", "value": "{{academicYearId}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Payroll Summary",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/reports/payroll-summary?month=4&year=2024",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "reports", "payroll-summary"],
+              "query": [
+                { "key": "month", "value": "4" },
+                { "key": "year",  "value": "2024" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Classwise Student Count",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/reports/classwise-students?academicYear={{academicYearId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "reports", "classwise-students"],
+              "query": [{ "key": "academicYear", "value": "{{academicYearId}}" }]
+            }
+          }
+        },
+        {
+          "name": "Employee Attendance Summary",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/reports/employee-attendance-summary?month=8&year=2024",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "reports", "employee-attendance-summary"],
+              "query": [
+                { "key": "month", "value": "8" },
+                { "key": "year",  "value": "2024" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "❤️ Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "url": "{{baseUrl}}/api/health"
+          }
+        }
+      ]
+    }
+
+  ]
+}
